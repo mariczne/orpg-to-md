@@ -1,0 +1,33 @@
+{
+  "name": "orpg-to-md",
+  "version": "0.1.0",
+  "description": "Convert OpenRouter export format to human-readable Markdown",
+  "main": "main.js",
+  "bin": {
+    "orpg-to-md": "./main.js"
+  },
+  "scripts": {
+    "test": "node --test tests/main.test.js",
+    "start": "node main.js",
+    "prepare": "chmod +x main.js"
+  },
+  "keywords": [
+    "openrouter",
+    "orpg",
+    "markdown",
+    "export"
+  ],
+  "author": "mariczne",
+  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mariczne/orpg-to-md.git"
+  },
+  "bugs": {
+    "url": "https://github.com/mariczne/orpg-to-md/issues"
+  },
+  "homepage": "https://github.com/mariczne/orpg-to-md#readme",
+  "prettier": {
+    "printWidth": 120
+  }
+}
