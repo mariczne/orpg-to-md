@@ -2,31 +2,42 @@
 
 const fs = require("fs");
 
+function convertMessageToMarkdown(message, characters) {
+  const isUser = message.characterId === "USER";
+  const prefix = isUser ? "#### You:" : `#### ${getAIName(message.characterId, characters)}:`;
+  return `${prefix}\n\n${message.content}\n\n`;
+}
+
+function getAIName(characterId, characters) {
+  const modelInfo = characters[characterId]?.modelInfo;
+  if (!modelInfo) return "AI";
+
+  const name = modelInfo.short_name || modelInfo.name || "AI";
+  return name;
+}
+
+function processMessages(data) {
+  const messages = Object.values(data.messages)
+    .sort((a, b) => a.updatedAt.localeCompare(b.updatedAt));
+
+  let markdown = '';
+  for (const message of messages) {
+    markdown += convertMessageToMarkdown(message, data.characters);
+  }
+  return markdown;
+}
+
 function convertToMarkdown(inputFile, outputFile) {
   try {
     const data = JSON.parse(fs.readFileSync(inputFile, "utf8"));
 
     if (!data.version || data.version !== "orpg.1.0") {
-      console.warn(`Warning: File may not be a valid ORPG export (expected version "orpg.1.0", got "${data.version || 'none'}")`);
+      console.warn(
+        `Warning: File may not be a valid ORPG export (expected version "orpg.1.0", got "${data.version || "none"}")`
+      );
     }
 
-    let aiName = "AI";
-    const characters = data.characters;
-    if (Object.keys(characters).length > 0) {
-      const firstChar = characters[Object.keys(characters)[0]];
-      aiName = firstChar.modelInfo.short_name || firstChar.modelInfo.name || "AI";
-    }
-
-    const messages = Object.values(data.messages).sort((a, b) => a.updatedAt.localeCompare(b.updatedAt));
-    let markdown = "";
-
-    messages.forEach((message) => {
-      if (message.characterId === "USER") {
-        markdown += `#### You:\n${message.content}\n\n`;
-      } else {
-        markdown += `#### ${aiName}:\n${message.content}\n\n`;
-      }
-    });
+    const markdown = processMessages(data);
 
     const finalOutputFile = outputFile || inputFile.replace(/\.[^.]+$/, ".md");
     fs.writeFileSync(finalOutputFile, markdown);
