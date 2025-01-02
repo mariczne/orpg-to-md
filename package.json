@@ -1,6 +1,6 @@
 {
   "name": "orpg-to-md",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Convert OpenRouter export format to human-readable Markdown",
   "main": "main.js",
   "bin": {
